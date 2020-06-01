@@ -8,6 +8,7 @@ import android.util.Base64
 import androidx.annotation.DrawableRes
 import androidx.annotation.IntRange
 import androidx.core.content.ContextCompat
+import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 
 /**
@@ -16,6 +17,46 @@ import java.io.ByteArrayOutputStream
  * Email:544066591@qq.com
  */
 object ImageUtils {
+
+    @JvmStatic
+    fun bitmapFromByteArr(data: ByteArray?, newWidth: Int, newHeight: Int): Bitmap? {
+        val `is` = ByteArrayInputStream(data)
+        val bmOptions = BitmapFactory.Options()
+        bmOptions.inSampleSize = 4
+        var bitmap = BitmapFactory.decodeStream(`is`, null, bmOptions)
+
+//        Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+        if (bitmap.width > bitmap.height) {
+            bitmap = rotate(
+                bitmap,
+                -90,
+                bitmap.width.toFloat(),
+                bitmap.height.toFloat()
+            )
+        }
+        bitmap = mirrorConvert(bitmap, 0)
+        val width = bitmap.width
+        val height = bitmap.height
+        // 计算缩放比例
+        val scaleWidth = newWidth.toFloat() / width
+        val scaleHeight = newHeight.toFloat() / height
+        // 取得想要缩放的matrix参数
+        val matrix = Matrix()
+        matrix.postScale(scaleWidth, scaleHeight)
+        // 得到新的图片
+        return Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true)
+    }
+
+    @JvmStatic
+    fun resizeImage(bitmap: Bitmap, width: Int, height: Int): Bitmap? {
+        val bmpWidth = bitmap.width
+        val bmpHeight = bitmap.height
+        val scaleWidth = width.toFloat() / bmpWidth
+        val scaleHeight = height.toFloat() / bmpHeight
+        val matrix = Matrix()
+        matrix.postScale(scaleWidth, scaleHeight)
+        return Bitmap.createBitmap(bitmap, 0, 0, bmpWidth, bmpHeight, matrix, true)
+    }
 
     @JvmStatic
     fun bitmap2Bytes(bitmap: Bitmap?, format: Bitmap.CompressFormat): ByteArray? {
@@ -124,9 +165,15 @@ object ImageUtils {
         return BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
     }
 
+    //旋转图片
+    @JvmStatic
+    fun rotate(src: Bitmap?, degrees: Int, px: Float, py: Float): Bitmap? {
+        return src?.let { rotateRecycle(it, degrees, px, py, false) }
+    }
+
     @JvmStatic
     @JvmOverloads
-    fun rotate(src: Bitmap, degrees: Int, px: Float, py: Float, recycle: Boolean = false): Bitmap? {
+    fun rotateRecycle(src: Bitmap, degrees: Int, px: Float, py: Float, recycle: Boolean = false): Bitmap? {
         if (isEmptyBitmap(src)) return null
         if (degrees == 0) return src
         val matrix = Matrix()

@@ -2,7 +2,9 @@ package com.xuyang.utilcode.util
 
 import android.app.ActivityManager
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import java.io.IOException
 import java.util.*
 
@@ -12,6 +14,40 @@ import java.util.*
  * Email:544066591@qq.com
  */
 object AppUtils {
+
+    /**
+     * 检测是否安装支付宝
+     * @param context
+     * @return
+     */
+    @JvmStatic
+    fun isAliPayInstalled(context: Context): Boolean {
+        val uri = Uri.parse("alipays://platformapi/startApp")
+        val intent = Intent(Intent.ACTION_VIEW, uri)
+        val componentName = intent.resolveActivity(context.packageManager)
+        return componentName != null
+    }
+
+    /**
+     * 检测是否安装微信
+     * @param context
+     * @return
+     */
+    @JvmStatic
+    fun isWechatInstalled(context: Context): Boolean {
+        val packageManager = context.packageManager // 获取packagemanager
+        val pinfo =
+            packageManager.getInstalledPackages(0) // 获取所有已安装程序的包信息
+        if (pinfo != null) {
+            for (i in pinfo.indices) {
+                val pn = pinfo[i].packageName
+                if (pn == "com.tencent.mm") {
+                    return true
+                }
+            }
+        }
+        return false
+    }
 
     @JvmStatic
     fun getAppVersionName(context: Context): String? {

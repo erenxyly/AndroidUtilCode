@@ -20,7 +20,7 @@ import java.lang.reflect.Method;
  * 2019-11-20
  * Email:544066591@qq.com
  */
-public class StatusBarUtil {
+public class StatusBarUtils {
     public final static int TYPE_MIUI = 0;
     public final static int TYPE_FLYME = 1;
     public final static int TYPE_M = 3;//6.0
