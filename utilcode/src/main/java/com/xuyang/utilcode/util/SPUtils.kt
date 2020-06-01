@@ -12,10 +12,12 @@ import java.lang.reflect.Method
  */
 object SPUtils {
 
+    private val defaultName = "spUtils"
+
     @JvmStatic
     fun put(context: Context, key: String, `object`: Any, name: String) {
         var mName = name;
-        if (isSpace(mName)) mName = "spUtils"
+        if (isSpace(mName)) mName = defaultName
 
         val sp = context.getSharedPreferences(
             mName,
@@ -42,8 +44,10 @@ object SPUtils {
 
     @JvmStatic
     operator fun get(context: Context, key: String, defaultObject: Any, name: String): Any? {
+        var mName = name;
+        if (isSpace(mName)) mName = defaultName
         val sp = context.getSharedPreferences(
-            name,
+            mName,
             Context.MODE_PRIVATE
         )
 
@@ -63,8 +67,10 @@ object SPUtils {
 
     @JvmStatic
     fun getString(context: Context, key: String, defaultObject: Any, name: String): String? {
+        var mName = name;
+        if (isSpace(mName)) mName = defaultName
         val sp = context.getSharedPreferences(
-            name,
+            mName,
             Context.MODE_PRIVATE
         )
         return if (defaultObject is String) {
@@ -76,8 +82,10 @@ object SPUtils {
 
     @JvmStatic
     fun remove(context: Context, key: String, name: String) {
+        var mName = name;
+        if (isSpace(mName)) mName = defaultName
         val sp = context.getSharedPreferences(
-            name,
+            mName,
             Context.MODE_PRIVATE
         )
         val editor = sp.edit()
@@ -87,8 +95,10 @@ object SPUtils {
 
     @JvmStatic
     fun clear(context: Context, name: String) {
+        var mName = name;
+        if (isSpace(mName)) mName = defaultName
         val sp = context.getSharedPreferences(
-            name,
+            mName,
             Context.MODE_PRIVATE
         )
         val editor = sp.edit()
@@ -98,8 +108,10 @@ object SPUtils {
 
     @JvmStatic
     fun contains(context: Context, key: String, name: String): Boolean {
+        var mName = name;
+        if (isSpace(mName)) mName = defaultName
         val sp = context.getSharedPreferences(
-            name,
+            mName,
             Context.MODE_PRIVATE
         )
         return sp.contains(key)
@@ -107,8 +119,10 @@ object SPUtils {
 
     @JvmStatic
     fun getAll(context: Context, name: String): Map<String, *> {
+        var mName = name;
+        if (isSpace(mName)) mName = defaultName
         val sp = context.getSharedPreferences(
-            name,
+            mName,
             Context.MODE_PRIVATE
         )
         return sp.all
