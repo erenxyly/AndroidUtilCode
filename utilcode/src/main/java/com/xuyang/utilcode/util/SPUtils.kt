@@ -14,9 +14,11 @@ object SPUtils {
 
     @JvmStatic
     fun put(context: Context, key: String, `object`: Any, name: String) {
+        var mName = name;
+        if (isSpace(mName)) mName = "spUtils"
 
         val sp = context.getSharedPreferences(
-            name,
+            mName,
             Context.MODE_PRIVATE
         )
         val editor = sp.edit()
@@ -147,5 +149,18 @@ object SPUtils {
 
             editor.commit()
         }
+    }
+
+    private fun isSpace(s: String?): Boolean {
+        if (s == null) return true
+        var i = 0
+        val len = s.length
+        while (i < len) {
+            if (!Character.isWhitespace(s[i])) {
+                return false
+            }
+            ++i
+        }
+        return true
     }
 }
