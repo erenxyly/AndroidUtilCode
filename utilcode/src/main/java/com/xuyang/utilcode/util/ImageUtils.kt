@@ -4,12 +4,14 @@ import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.media.ExifInterface
 import android.util.Base64
 import androidx.annotation.DrawableRes
 import androidx.annotation.IntRange
 import androidx.core.content.ContextCompat
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
+import java.io.IOException
 
 /**
  * Created by XuYang
@@ -251,5 +253,54 @@ object ImageUtils {
             matrix.setScale(1f, -1f)
         }
         return Bitmap.createBitmap(srcBitmap, 0, 0, srcBitmap.width, srcBitmap.height, matrix, true)
+    }
+
+    /**
+     * 读取图片属性：旋转的角度
+     * @param path 图片绝对路径
+     * @return degree旋转的角度
+     */
+    @JvmStatic
+    fun readPictureDegree(path: String?): Int {
+        var degree = 0
+        try {
+            val exifInterface = ExifInterface(path)
+            val orientation = exifInterface.getAttributeInt(
+                ExifInterface.TAG_ORIENTATION,
+                ExifInterface.ORIENTATION_NORMAL
+            )
+            when (orientation) {
+                ExifInterface.ORIENTATION_ROTATE_90 -> degree = 90
+                ExifInterface.ORIENTATION_ROTATE_180 -> degree = 180
+                ExifInterface.ORIENTATION_ROTATE_270 -> degree = 270
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return degree
+    }
+
+
+    /*
+     * 旋转图片
+     * @param angle
+     * @param bitmap
+     * @return Bitmap
+     */
+    @JvmStatic
+    fun rotaingImageView(angle: Int, bitmap: Bitmap): Bitmap? {
+        //旋转图片 动作
+        val matrix = Matrix()
+        matrix.postRotate(angle.toFloat())
+        // 创建新的图片
+        return Bitmap.createBitmap(
+            bitmap,
+            0,
+            0,
+            bitmap.width,
+            bitmap.height,
+            matrix,
+            true
+        )
     }
 }
